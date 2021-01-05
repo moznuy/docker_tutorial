@@ -1,0 +1,76 @@
+version: '3.0'
+
+services:
+  backend:
+    image: backend
+    build:
+      context: chat
+
+    depends_on:
+      - postgres
+      - migration
+
+#    ports:
+#    - 8000:8000
+
+    environment:
+      DATABASE_URL: psql://backend:pass@postgres:5432/chat
+      POSTGRES_USER: backend
+      POSTGRES_DB: chat
+      POSTGRES_PASSWORD: pass
+
+    command: ["./wait-for-postgres.sh", "postgres", "gunicorn", "--bind", "0.0.0.0:8000", "chat.wsgi"]
+
+  migration:
+    image: backend
+
+    depends_on:
+      - postgres
+
+    environment:
+      DATABASE_URL: psql://backend:pass@postgres:5432/chat
+      POSTGRES_USER: backend
+      POSTGRES_DB: chat
+      POSTGRES_PASSWORD: pass
+
+    command: ["./wait-for-postgres.sh", "postgres", "python", "manage.py", "migrate"]
+
+  collect_static:
+    image: backend
+
+    volumes:
+      - static_volume:/static
+
+    environment:
+      STATIC_ROOT: '/static'
+
+    command: ["python", "manage.py", "collectstatic", "--noinput"]
+
+
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: backend
+      POSTGRES_DB: chat
+
+    ports:
+      - 5432:5432
+
+    volumes:
+      - ./POSTGRES_DB:/var/lib/postgresql/data
+
+  nginx:
+    image: my_nginx
+    build:
+      context: nginx
+
+    ports:
+      - 8080:80
+
+    volumes:
+      - static_volume:/static_folder:ro
+
+
+volumes:
+  static_volume:
