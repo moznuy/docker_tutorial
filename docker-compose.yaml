@@ -70,6 +70,9 @@ services:
     build:
       context: nginx
 
+    depends_on:
+      - backend
+
     ports:
 #      - 8080:80
       - mode: host
