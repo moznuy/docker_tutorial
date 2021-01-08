@@ -15,11 +15,12 @@ services:
 
     environment:
       DATABASE_URL: psql://backend:pass@postgres:5432/chat
+      POSTGRES_HOST: postgres
       POSTGRES_USER: backend
-      POSTGRES_DB: chat
       POSTGRES_PASSWORD: pass
+      POSTGRES_DB: chat
 
-    command: ["./wait-for-postgres.sh", "postgres", "gunicorn", "--bind", "0.0.0.0:8000", "chat.wsgi"]
+    command: ["./wait-for-postgres.sh", "gunicorn", "--bind", "0.0.0.0:8000", "chat.wsgi"]
 
   migration:
     image: scharykov/backend:latest
@@ -33,11 +34,12 @@ services:
 
     environment:
       DATABASE_URL: psql://backend:pass@postgres:5432/chat
+      POSTGRES_HOST: postgres
       POSTGRES_USER: backend
-      POSTGRES_DB: chat
       POSTGRES_PASSWORD: pass
+      POSTGRES_DB: chat
 
-    command: ["./wait-for-postgres.sh", "postgres", "python", "manage.py", "migrate"]
+    command: ["./wait-for-postgres.sh", "python", "manage.py", "migrate"]
 
   collect_static:
     image: scharykov/backend:latest
@@ -70,14 +72,13 @@ services:
     build:
       context: nginx
 
-    depends_on:
-      - backend
+    restart: always
 
     ports:
 #      - 8080:80
       - mode: host
         protocol: tcp
-        published: 8080
+        published: 80
         target: 80
 
     volumes:
