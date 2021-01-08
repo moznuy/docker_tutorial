@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   backend:
-    image:  scharykov/backend:latest
+    image:  scharykov/test_backend:latest
     build:
       context: chat
 
@@ -23,7 +23,7 @@ services:
     command: ["./wait-for-postgres.sh", "gunicorn", "--bind", "0.0.0.0:8000", "chat.wsgi"]
 
   migration:
-    image: scharykov/backend:latest
+    image: scharykov/test_backend:latest
 
     depends_on:
       - postgres
@@ -42,7 +42,7 @@ services:
     command: ["./wait-for-postgres.sh", "python", "manage.py", "migrate"]
 
   collect_static:
-    image: scharykov/backend:latest
+    image: scharykov/test_backend:latest
 
     volumes:
       - static_volume:/static
@@ -68,7 +68,7 @@ services:
       - ./POSTGRES_DB:/var/lib/postgresql/data
 
   nginx:
-    image: scharykov/nginx:latest
+    image: scharykov/test_nginx:latest
     build:
       context: nginx
 
@@ -86,7 +86,7 @@ services:
       - frontend_volume:/frontend:ro
 
   frontend:
-    image: scharykov/frontend:latest
+    image: scharykov/test_frontend:latest
     build:
       context: front
 
