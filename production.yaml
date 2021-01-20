@@ -1,0 +1,98 @@
+version: '3.7'
+
+services:
+  backend:
+    image:  scharykov/test_backend:latest
+    build:
+      context: chat
+
+    depends_on:
+      - postgres
+      - migration
+
+#    ports:
+#    - 8000:8000
+
+    environment:
+      DATABASE_URL: psql://backend:pass@postgres:5432/chat
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: chat
+
+    command: ["./wait-for-postgres.sh", "gunicorn", "--bind", "0.0.0.0:8000", "chat.wsgi"]
+
+  migration:
+    image: scharykov/test_backend:latest
+
+    depends_on:
+      - postgres
+
+#    deploy:
+#      restart_policy:
+#        condition: none
+
+    environment:
+      DATABASE_URL: psql://backend:pass@postgres:5432/chat
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: chat
+
+    command: ["./wait-for-postgres.sh", "python", "manage.py", "migrate"]
+
+  collect_static:
+    image: scharykov/test_backend:latest
+
+    volumes:
+      - static_volume:/static
+
+#    deploy:
+#      restart_policy:
+#        condition: none
+
+    environment:
+      STATIC_ROOT: '/static'
+
+    command: ["python", "manage.py", "collectstatic", "--noinput"]
+
+
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: backend
+      POSTGRES_DB: chat
+
+    volumes:
+      - ./POSTGRES_DB:/var/lib/postgresql/data
+
+  nginx:
+    image: scharykov/test_nginx:latest
+    build:
+      context: nginx
+
+    restart: always
+
+    ports:
+#      - 8080:80
+      - mode: host
+        protocol: tcp
+        published: 80
+        target: 80
+
+    volumes:
+      - static_volume:/static_folder:ro
+      - frontend_volume:/frontend:ro
+
+  frontend:
+    image: scharykov/test_frontend:latest
+    build:
+      context: front
+
+    volumes:
+      - frontend_volume:/frontend
+
+volumes:
+  static_volume:
+  frontend_volume:

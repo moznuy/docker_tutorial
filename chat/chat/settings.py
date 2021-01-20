@@ -31,7 +31,7 @@ SECRET_KEY = '#f-f9s6@$dlzn7uecc77=4a%1&ku-8mqmtq-gj1@*zb&ef$vy7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backend']
+ALLOWED_HOSTS = ['backend', '127.0.0.1']
 
 
 # Application definition
@@ -44,13 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'rest_framework',
+
     'message',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -125,3 +128,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = env('STATIC_ROOT', default=BASE_DIR / 'staticfiles')
+
+CORS_ALLOW_ALL_ORIGINS = True
