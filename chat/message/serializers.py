@@ -7,3 +7,4 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Message
         fields = '__all__'
+        read_only_fields = ['user']
