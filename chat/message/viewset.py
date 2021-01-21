@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from message import models, serializers
 
@@ -26,3 +27,11 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         self.get_queryset().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserInfo(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        s = serializers.UserSerializer(instance=request.user)
+        return Response(s.data)
