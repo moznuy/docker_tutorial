@@ -34,14 +34,26 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push
+    - name: Build and push Backend
       uses: docker/build-push-action@v2
       with:
         context: chat
-#         file: ./Dockerfile
         push: true
         tags: scharykov/test_backend:latest
-      
+
+    - name: Build and push Nginx
+      uses: docker/build-push-action@v2
+      with:
+        context: nginx
+        push: true
+        tags: scharykov/test_nginx:latest
+
+    - name: Build and push Frontend
+      uses: docker/build-push-action@v2
+      with:
+        context: front
+        push: true
+        tags: scharykov/test_frontend:latest
       
 
 # # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
