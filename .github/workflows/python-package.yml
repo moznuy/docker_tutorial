@@ -18,6 +18,7 @@ jobs:
         architecture: 'x64'
     # You can test your matrix by printing the current Python version
     - name: Display Python version
+      working-directory: chat
       run: python manage.py test
 
 # # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
