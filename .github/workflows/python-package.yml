@@ -21,11 +21,24 @@ jobs:
       working-directory: chat
       run: pip install -r requirements.txt
       
-    - run: exit 1
-      
-    - name: Display Python version
+    - name: Run Tests
       working-directory: chat
       run: python manage.py test
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: chat
+#         file: ./Dockerfile
+        push: true
+        tags: scharykov/test_backend:latest
+      
       
 
 # # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
