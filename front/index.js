@@ -1,5 +1,5 @@
 async function load_messages(messagesContainer, messages, setMessages) {
-  const resp = await fetch("//127.0.0.1:8000/api/message/", {
+  const resp = await fetch("/api/message/", {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('access')}`
@@ -17,7 +17,7 @@ async function load_messages(messagesContainer, messages, setMessages) {
 }
 
 async function login_post(username, password) {
-  const resp = await fetch("//127.0.0.1:8000/auth/token/", {
+  const resp = await fetch("/auth/token/", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -88,7 +88,7 @@ function loaded() {
 }
 
 async function delete_message(messagesContainer, id, messages, setMessages) {
-  const resp = await fetch(`//127.0.0.1:8000/api/message/${id}/`, {
+  const resp = await fetch(`/api/message/${id}/`, {
       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
       // mode: 'cors', // no-cors, *cors, same-origin
       headers: {
@@ -127,7 +127,7 @@ function updateDom(messagesContainer, messages) {
 async function post(messagesContainer, text, messages, setMessages) {
   console.log(text);
 
-  const resp = await fetch("//127.0.0.1:8000/api/message/", {
+  const resp = await fetch("/api/message/", {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
     // mode: 'cors', // no-cors, *cors, same-origin
     headers: {
@@ -151,7 +151,7 @@ async function post(messagesContainer, text, messages, setMessages) {
 }
 
 async function clear(messagesContainer, messages, setMessages) {
-    const resp = await fetch("//127.0.0.1:8000/api/message/clear/", {
+    const resp = await fetch("/api/message/clear/", {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       // mode: 'cors', // no-cors, *cors, same-origin
       headers: {
@@ -159,7 +159,11 @@ async function clear(messagesContainer, messages, setMessages) {
         'Authorization': `Bearer ${localStorage.getItem('access')}`,
       },
     });
-    // 204
+    if (resp.status !== 204) {
+      console.error(resp.status);
+      return
+    }
+
     messages = setMessages([]);
     updateDom(messagesContainer, messages);
 }
