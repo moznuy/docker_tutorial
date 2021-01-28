@@ -62,5 +62,31 @@ jobs:
         username: admin
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        script: whoami
+        script: | 
+          docker-compose pull backend collect_static migration
+          docker-compose rm -fs backend collect_static migration
+          docker-compose up -d backend collect_static migration
 
+    - name: Deploy Frontend
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: admin
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: | 
+          docker-compose pull frontend
+          docker-compose rm -fs frontend
+          docker-compose up -d frontend
+
+    - name: Deploy Nginx
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: admin
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: | 
+          docker-compose pull nginx
+          docker-compose rm -fs nginx
+          docker-compose up -d nginx
