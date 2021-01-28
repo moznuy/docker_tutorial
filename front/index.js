@@ -53,7 +53,7 @@ function drawPage() {
     submitButton.addEventListener("click", () => login_post(inputUsername.value, inputPassword.value));
   } else {
     body.innerHTML = `
-      <h1>Hello</h1>
+      <h1>Hello World!</h1>
       <button id="logout">Logout</button><br>
       <button id="clear">Clear</button><br>
       <input id="text" type="text">
